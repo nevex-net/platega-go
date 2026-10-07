@@ -1,0 +1,21 @@
+name: Feature request
+description: Support another Platega endpoint or improve the API
+labels: [enhancement]
+body:
+  - type: textarea
+    id: want
+    attributes:
+      label: What do you need?
+      description: For a new endpoint, link its page in the Platega documentation.
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why, and what are you doing today instead?
+  - type: checkboxes
+    id: help
+    attributes:
+      label: Contribution
+      options:
+        - label: I can open a pull request for this

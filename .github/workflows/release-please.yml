@@ -1,0 +1,55 @@
+name: release-please
+
+# Maintains a release pull request from Conventional Commits on main: it
+# bumps the version, writes CHANGELOG.md and, when that PR is merged, tags the
+# release (vX.Y.Z) and creates the GitHub release. Publishing a Go module is
+# just the tag; pkg.go.dev and `go get` pick it up from there.
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    outputs:
+      release_created: ${{ steps.rp.outputs.release_created }}
+      tag_name: ${{ steps.rp.outputs.tag_name }}
+    steps:
+      - id: rp
+        uses: googleapis/release-please-action@v4
+        with:
+          # Pull requests opened with the default GITHUB_TOKEN do not trigger
+          # other workflows, so CI would not run on the release PR. Set the
+          # RELEASE_PLEASE_TOKEN secret (a fine-grained PAT or a GitHub App
+          # token with contents and pull-requests write access) to fix that.
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN || secrets.GITHUB_TOKEN }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  verify-release:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created == 'true' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.release-please.outputs.tag_name }}
+      - uses: actions/setup-go@v5
+        with:
+          go-version: stable
+      - run: go vet ./...
+      - run: go test -race -count=1 ./...
+      - name: Ask the Go module proxy for the new version
+        env:
+          TAG: ${{ needs.release-please.outputs.tag_name }}
+        run: |
+          # Fetching it once makes pkg.go.dev and `go get` see it right away.
+          curl -fsS --retry 5 --retry-delay 10 --retry-all-errors \
+            "https://proxy.golang.org/github.com/nevex-net/platega-go/@v/${TAG}.info"

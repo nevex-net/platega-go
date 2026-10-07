@@ -1,0 +1,34 @@
+name: pr-title
+
+# release-please derives versions and release notes from commit messages, and
+# with squash merging the PR title becomes the commit message. Keep it valid.
+
+on:
+  pull_request_target:
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  pull-requests: read
+
+jobs:
+  conventional-title:
+    runs-on: ubuntu-latest
+    steps:
+      # No checkout: this job only reads the PR title, so running it with
+      # pull_request_target (needed for fork PRs) is safe.
+      - uses: amannn/action-semantic-pull-request@v5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          types: |
+            feat
+            fix
+            perf
+            revert
+            refactor
+            docs
+            test
+            build
+            ci
+            chore
+            style

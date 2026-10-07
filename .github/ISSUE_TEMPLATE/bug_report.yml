@@ -1,0 +1,41 @@
+name: Bug report
+description: Something does not work as documented
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Do not paste secrets.** Redact `X-MerchantId`, `X-Secret`, `Authorization`,
+        card numbers and payer data. Security issues go through the private
+        "Report a vulnerability" form, not here.
+  - type: input
+    id: version
+    attributes:
+      label: Library version
+      placeholder: v0.1.0 or commit hash
+    validations:
+      required: true
+  - type: input
+    id: go
+    attributes:
+      label: Go version
+      placeholder: go version output
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Minimal reproduction
+      description: Code, and the redacted API request/response if you have them.
+      render: go
+  - type: textarea
+    id: error
+    attributes:
+      label: Error output
+      render: text
