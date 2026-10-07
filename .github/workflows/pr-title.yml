@@ -16,7 +16,7 @@ jobs:
     steps:
       # No checkout: this job only reads the PR title, so running it with
       # pull_request_target (needed for fork PRs) is safe.
-      - uses: amannn/action-semantic-pull-request@v5
+      - uses: amannn/action-semantic-pull-request@v6
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
