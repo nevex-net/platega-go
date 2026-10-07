@@ -25,9 +25,10 @@ jobs:
         with:
           # Pull requests opened with the default GITHUB_TOKEN do not trigger
           # other workflows, so CI would not run on the release PR. Set the
-          # RELEASE_PLEASE_TOKEN secret (a fine-grained PAT or a GitHub App
-          # token with contents and pull-requests write access) to fix that.
-          token: ${{ secrets.RELEASE_PLEASE_TOKEN || secrets.GITHUB_TOKEN }}
+          # NEVEXBOT_TOKEN secret (a fine-grained PAT of the bot account, or a
+          # GitHub App token, with contents and pull-requests write access) to
+          # fix that and to author releases as the bot.
+          token: ${{ secrets.NEVEXBOT_TOKEN || secrets.GITHUB_TOKEN }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
 
